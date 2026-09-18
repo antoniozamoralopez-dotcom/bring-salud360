@@ -1,7 +1,7 @@
-name: Build APK v0.3
+name: Build APK v0.4
 on:
   push:
-    branches: [ "salud360-build-v03" ]
+    branches: [ "salud360-build-v031" ]
   workflow_dispatch:
 jobs:
   build:
@@ -23,9 +23,9 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --stacktrace
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk Salud360-v0.3.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk Salud360-v0.4.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Salud360-v0.3
-          path: Salud360-v0.3.apk
+          name: Salud360-v0.4
+          path: Salud360-v0.4.apk
           if-no-files-found: error
