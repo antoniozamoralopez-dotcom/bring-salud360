@@ -2,6 +2,8 @@ package com.salud360.entreno;
 
 import android.Manifest;
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -467,7 +469,54 @@ public class MainActivity extends Activity {
         root.put("execution", execution);
         root.put("modules", modules);
         root.put("synced_at", System.currentTimeMillis());
+        updateWidgetSnapshot(root);
         return root;
+    }
+
+    private void updateWidgetSnapshot(JSONObject root) {
+        try {
+            String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            String training = "Sin sesión prevista hoy";
+            JSONObject plan = root.optJSONObject("plan");
+            JSONArray ss = plan == null ? null : plan.optJSONArray("sessions");
+            if (ss != null) {
+                JSONObject next = null;
+                for (int i = 0; i < ss.length(); i++) {
+                    JSONObject s = ss.optJSONObject(i);
+                    if (s == null) continue;
+                    String d = s.optString("date", "");
+                    if (today.equals(d)) {
+                        training = s.optString("title", "Entrenamiento de hoy");
+                        next = null;
+                        break;
+                    }
+                    if (next == null && d.compareTo(today) > 0) next = s;
+                }
+                if (training.equals("Sin sesión prevista hoy") && next != null) {
+                    training = "Próxima: " + next.optString("title", "sesión");
+                }
+            }
+            int shopping = 0;
+            JSONObject modules = root.optJSONObject("modules");
+            JSONObject shop = modules == null ? null : modules.optJSONObject("shopping");
+            JSONArray items = shop == null ? null : shop.optJSONArray("items");
+            if (items != null) shopping = items.length();
+
+            prefs.edit()
+                    .putString("widget_training", training)
+                    .putString("widget_secondary", shopping == 0
+                            ? "Compra: sin pendientes"
+                            : "Compra: " + shopping + " pendiente" + (shopping == 1 ? "" : "s"))
+                    .apply();
+
+            AppWidgetManager awm = AppWidgetManager.getInstance(this);
+            ComponentName cn = new ComponentName(this, Salud360Widget.class);
+            int[] ids = awm.getAppWidgetIds(cn);
+            Intent intent = new Intent(this, Salud360Widget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            sendBroadcast(intent);
+        } catch (Exception ignored) {}
     }
 
     private String isoDay(Calendar c) {
