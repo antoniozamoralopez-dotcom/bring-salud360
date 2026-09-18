@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="14dp"
+    android:background="#17191E">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SALUD 360"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:textColor="#88E38D" />
+
+    <TextView
+        android:id="@+id/widget_training"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="Entrenamiento"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:textColor="#F7F8F8" />
+
+    <TextView
+        android:id="@+id/widget_secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="Panel de salud"
+        android:textSize="13sp"
+        android:textColor="#AEB5BF" />
+</LinearLayout>
